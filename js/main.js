@@ -81,8 +81,19 @@ Validator.minLength = function (selector, min) {
     return {
         selector: selector,
         test: function (value) {
-            return value.lenth >= min ? undefined : `Password ít nhất ${min} ký tự`;
+            return value.length >= min ? undefined : `Password ít nhất ${min} ký tự`;
 
         }
     }
+}
+
+Validator.isConfirmed = function (selector, getConfirmValue) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value === getConfirmValue() ? undefined : "Giá trị nhập lại không đúng"
+
+        }
+    }
+
 }
