@@ -6,7 +6,7 @@ function Validator(options) {
     function validate(inputElement, rule) {
         var errorMessage = rule.test(inputElement.value);
         //.parentElement lấy thẻ cha.
-        var errorElement = inputElement.parentElement.querySelector('.form-message')
+        var errorElement = inputElement.parentElement.querySelector(options.errorSelector)
         // console.log(errorMessage)
         if (errorMessage) {
             errorElement.innerText = errorMessage;
@@ -31,6 +31,7 @@ function Validator(options) {
 
             // console.log(inputElement)
             if (inputElement) {
+                // Xử lý trường hợp blur ra ngoài.
                 inputElement.onblur = function () {
                     // console.log('blur' + rule.selector)
                     // console.log(inputElement.value)
@@ -39,7 +40,13 @@ function Validator(options) {
                     // console.log(rule)
                     validate(inputElement, rule)
                     // console.log(errorElement)
-
+                }
+                // Xử lý mỗi khi người dùng nhập vào input
+                inputElement.oninput = function () {
+                    //.parentElement lấy thẻ cha.
+                    var errorElement = inputElement.parentElement.querySelector(options.errorSelector)
+                    errorElement.innerText = '';
+                    inputElement.parentElement.classList.remove('invalid')
                 }
             }
 
@@ -63,9 +70,19 @@ Validator.isRequired = function (selector) {
 Validator.isEmail = function (selector) {
     return {
         selector: selector,
-        test: function () {
+        test: function (value) {
+            var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            return regex.test(value) ? undefined : "Email không đúng"
 
         }
     }
+}
+Validator.minLength = function (selector, min) {
+    return {
+        selector: selector,
+        test: function (value) {
+            return value.lenth >= min ? undefined : `Password ít nhất ${min} ký tự`;
 
+        }
+    }
 }
