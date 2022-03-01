@@ -12,7 +12,7 @@
   <body>
     <div class="main">
       <form action="" method="POST" class="form" id="form-1">
-        <h3 class="heading">Thành viên đăng ký</h3>
+        <h3 class="heading">Đăng ký thành viên</h3>
         <p class="desc">BẠN ĐĂNG KÝ THÀNH VIÊN BLOG ❤️</p>
 
         <div class="spacer"></div>
@@ -55,6 +55,7 @@
     <script>
       Validator({
         form: '#form-1',
+        formGroupSelector: '.form-group',
         errorSelector: '.form-message',
         rules: [
           Validator.isRequired('#fullname','Vui lòng nhập tên đầy đủ của bạn'),
