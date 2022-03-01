@@ -24,14 +24,46 @@ function Validator(options) {
             errorElement.innerText = '';
             inputElement.parentElement.classList.remove('invalid');
         }
+        return !errorMessage;
     }
-    // console.log(options)
-    // console.log(options.rules)
+
     // Lấy element của form cần validate
     var formElement = document.querySelector(options.form);
 
     if (formElement) {
-        // console.log(formElement)
+        // Khi submit form
+        formElement.onsubmit = function (e) {
+            e.preventDefault();
+
+            var isFormValid = true;
+
+            //Lặp qua từng rule và validate
+            options.rules.forEach(function (rule) {
+                var inputElement = formElement.querySelector(rule.selector);
+                var isValid = validate(inputElement, rule);
+                if (!isValid) {
+                    isFormValid = false
+                }
+
+            });
+
+            // Lấy dữ liệu form đã validate gửi ra ngoài.
+            if (isFormValid) {
+                if (typeof options.onSubmit === 'function') {
+                    var enableInputs = formElement.querySelectorAll('[name]');
+                    var formValues = Array.from(enableInputs).reduce(function (values, input) {
+                        return (values[input.name] = input.value) && values;
+
+                    }, {});
+                    // console.log(formValues)
+                    options.onSubmit(formValues)
+                }
+            }
+
+
+        }
+
+        // lặp qua mỗi rule và xử lý: lắng nghe, blur, input ...
         options.rules.forEach(function (rule) {
             // Lưu lại các rule cho các input
             if (Array.isArray(selectorRules[rule.selector])) {
@@ -47,11 +79,6 @@ function Validator(options) {
             if (inputElement) {
                 // Xử lý trường hợp blur ra ngoài.
                 inputElement.onblur = function () {
-                    // console.log('blur' + rule.selector)
-                    // console.log(inputElement.value)
-                    // value: inputElement.value
-                    // test function: rule.test
-                    // console.log(rule)
                     validate(inputElement, rule);
                     // console.log(errorElement)
                 };
